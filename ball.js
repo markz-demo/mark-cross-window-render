@@ -3,8 +3,19 @@ import * as THREE from './three/three.module.js';
 const OUTER_RADIUS = 150, INNER_RADIUS = 80; // 大小球体的半径
 const OUTER_SPRITE_WIDTH = 50, INNER_RSPRITE_WIDTH = 20; // 大小球体上的粒子高宽
 const OUTER_SPRITE_COUNT = 100, INNER_RSPRITE_COUNT = 50, MOVE_SPRITE_COUNT = 10; // 大小球体、及连线上的粒子个数
-const MOVE_FRAME_NUM = 100; // 连线动画的粒子移动的帧数
+const MOVE_FRAME_NUM = 100; // 连线动画的粒子移动的帧数，数越小移动速度越快
+const MOVE_FRAME_GAP = 10; // 连线动画的粒子先后移动的帧数间隔，数值越小越密集
 const COLORS = [0, 60 / 360, 120 / 360, 180 / 360, 240 / 360]; // 粒子颜色数组，一个球体对应一个颜色
+
+// v2.1版小粒子效果
+/* 
+const OUTER_RADIUS = 150, INNER_RADIUS = 80; // 大小球体的半径
+const OUTER_SPRITE_WIDTH = 10, INNER_RSPRITE_WIDTH = 5; // 大小球体上的粒子高宽
+const OUTER_SPRITE_COUNT = 300, INNER_RSPRITE_COUNT = 50, MOVE_SPRITE_COUNT = 200; // 大小球体、及连线上的粒子个数
+const MOVE_FRAME_NUM = 100; // 连线动画的粒子移动的帧数
+const MOVE_FRAME_GAP = 2; // 连线动画的粒子先后移动的帧数间隔，数值越小越密集
+const COLORS = [0, 60 / 360, 120 / 360, 180 / 360, 240 / 360]; // 粒子颜色数组，一个球体对应一个颜色
+*/
 
 // 创建粒子材质
 const materialTemp = (function () {
@@ -86,7 +97,7 @@ export default class BALL {
         // clone材质
         const material = materialTemp.clone();
         // 粒子颜色的对比度随机
-        material.color.setHSL(COLORS[(key - 1) % 3], Math.random(), 0.5);
+        material.color.setHSL(COLORS[(key - 1) % 3], 0.75/* Math.random() */, 0.5);
         material.map.offset.set(- 0.5, - 0.5);
         material.map.repeat.set(2, 2);
         // 创建精灵
@@ -183,7 +194,7 @@ export default class BALL {
             const moveY = moveP.y + group1.position.y;
 
             move.frame++;
-            if (move.frame % 10 === 0) { // 每10帧开始移动一个粒子，达到粒子先后依次移动射线效果
+            if (move.frame % MOVE_FRAME_GAP === 0) { // 每10帧开始移动一个粒子，达到粒子先后依次移动射线效果
                 move.index++;
             }
             move.groups.forEach((group, i) => {
